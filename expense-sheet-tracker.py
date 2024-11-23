@@ -3,6 +3,8 @@ import pandas as pd
 import numpy as np
 import csv
 
+# Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+
 def setNewHeader(new_header, df_body):
     df_body.columns = new_header
     return df_body
@@ -21,13 +23,19 @@ def setNewHeader(new_header, df_body):
 
 #     # df.to_excel('hi.xlsx')
 
+def removeCreditCardThankYou(df):
+    filter = df["Description"].str.contains("THANK YOU")
+    return df[~filter]
+
 def setUpCreditAE(credit_ae_sheet):
     df = pd.read_excel(credit_ae_sheet, header=11)
+    df = removeCreditCardThankYou(df)
     return df
 
 def setUpTD(td_sheet):
     df = pd.read_csv(td_sheet, usecols=[0,1,2,3], names=["Date", "Description", "Amount", "Gained"])
-    print(df)
+    df = removeCreditCardThankYou(df)
+    return df
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
