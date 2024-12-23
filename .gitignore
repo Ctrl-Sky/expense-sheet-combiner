@@ -1,2 +1,7 @@
+# Virtual env
 .venv
 venv/
+
+# Excel sheets
+sheets
+sheets/*
