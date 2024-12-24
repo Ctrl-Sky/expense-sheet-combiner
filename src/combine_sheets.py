@@ -5,7 +5,6 @@ def combine_df(ae, tdc, tdd):
     df_sorted = df_combined.sort_values(by='Date')
     df_sorted.reset_index(drop=True, inplace=True)
     df_sorted.to_excel('sheets/master.xlsx')
-
     
 
 # Consider creating a masters excel file that concats everything to it

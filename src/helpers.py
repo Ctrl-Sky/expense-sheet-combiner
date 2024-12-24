@@ -1,7 +1,7 @@
 import pandas as pd
 
 def column_to_date_time(df, columnName, format):
-    df[columnName] = pd.to_datetime(df[columnName], format=format)
+    df[columnName] = pd.to_datetime(df[columnName], format=format).dt.date
 
 def insert_new_column(df, position, name, values):
     df.insert(position, name, values)
