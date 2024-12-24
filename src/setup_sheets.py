@@ -50,7 +50,7 @@ def setup_TD(td_sheet, is_debit=False):
     Space is empty value for easier readibility for description
     Amount is $ spent or earned (can be pos or neg)
     """
-    card_name = "Debit TD" if is_debit else "Credit TD"
+    card_name = "Debit" if is_debit else "Credit"
 
     df = pd.read_csv(td_sheet, usecols=[0,1,2,3], names=["Date", "Description", "Amount", "Gained"])
 
