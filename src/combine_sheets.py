@@ -1,10 +1,10 @@
 import pandas as pd
 
-def combine_df(ae, tdc):
-    df_combined = pd.concat([ae, tdc])
+def combine_df(ae, tdc, tdd):
+    df_combined = pd.concat([ae, tdc, tdd])
     df_sorted = df_combined.sort_values(by='Date')
     df_sorted.reset_index(drop=True, inplace=True)
-    df_sorted.to_excel('hi2.xlsx')
+    df_sorted.to_excel('sheets/master.xlsx')
 
     
 

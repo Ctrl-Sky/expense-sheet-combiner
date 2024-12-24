@@ -4,4 +4,5 @@ venv/
 
 # Excel sheets
 sheets
-sheets/*
+
+__pycache__
