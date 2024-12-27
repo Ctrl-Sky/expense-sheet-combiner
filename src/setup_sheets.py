@@ -32,7 +32,6 @@ def setup_credit_AE(credit_ae_sheet):
     hp.insert_new_column(df, 6, "Card", ["Amex"]*len(df))
     df["Amount"] = pd.to_numeric(df['Amount'])
 
-    print(df)
     return df
 
 def setup_TD(td_sheet, is_debit=False):
@@ -61,7 +60,7 @@ def setup_TD(td_sheet, is_debit=False):
     for i in range(2,5):
         hp.insert_new_column(df, i, "Space" + str(i-1), [np.nan]*len(df))
 
-    # Move gained value into amount as a negative and delete column
+    # Move Gained value into Amount as a negative and delete column
     df['Amount'] = df['Amount'].fillna(-df['Gained'])
     df = df.drop(df.columns[-1], axis=1)
     
