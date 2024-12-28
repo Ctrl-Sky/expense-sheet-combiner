@@ -1,5 +1,6 @@
 import argparse
 from openpyxl import load_workbook
+import xlsxwriter
 import pandas as pd
 import setup_sheets as ss
 import combine_sheets
@@ -12,6 +13,7 @@ if __name__ == "__main__":
 
     MASTER_PATH = 'sheets/master.xlsx'
     for month, sub_df in split_df.items():
+        sub_df['Date'] = sub_df['Date'].dt.date
         try:
             with pd.ExcelWriter(MASTER_PATH, engine='openpyxl', mode='a', if_sheet_exists='overlay') as writer:
                 if month in writer.sheets:
@@ -23,6 +25,11 @@ if __name__ == "__main__":
             with pd.ExcelWriter(MASTER_PATH, engine='openpyxl') as writer:
                 sub_df.to_excel(writer, sheet_name=month, index=False)
 
+        workbook = load_workbook(MASTER_PATH)
+        worksheet = workbook[month]
+        worksheet.column_dimensions['A'].width = 11
+        workbook.save(MASTER_PATH)
+
 
     # book = load_workbook('sheets/master.xlsx')
     # writer = pd.ExcelWriter('sheets/master.xlsx', engine='openpyxl')
@@ -32,8 +39,6 @@ if __name__ == "__main__":
     #     print(f"Data for {month}:\n{sub_df}\n")
     #     sub_df.to_excel(writer, sheet_name=month, startrow=writer.sheets[month].max_row, index=False, header=False)
 
-    #     worksheet = writer[month]
-    #     worksheet.column_dimensions['B'].width = 11
 
     # writer.save()
 
