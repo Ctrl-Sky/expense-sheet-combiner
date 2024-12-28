@@ -1,34 +1,15 @@
-import argparse
 from openpyxl import load_workbook
-import xlsxwriter
 import pandas as pd
-import setup_sheets as ss
-import combine_sheets
+from standardize import initialize_AE, initialize_TD
+from combine_and_split import combine_and_split_by_month
+from write import write_to_master
 
 if __name__ == "__main__":
-    ae_df = ss.setup_credit_AE("sheets/Summary.xls")
-    td_credit_df = ss.setup_TD("sheets/accountactivity1.csv")
-    td_debit_df = ss.setup_TD("sheets/accountactivity.csv", is_debit=True)
-    split_df = combine_sheets.combine_df(ae_df, td_credit_df, td_debit_df)
-
-    MASTER_PATH = 'sheets/master.xlsx'
-    for month, sub_df in split_df.items():
-        sub_df['Date'] = sub_df['Date'].dt.date
-        try:
-            with pd.ExcelWriter(MASTER_PATH, engine='openpyxl', mode='a', if_sheet_exists='overlay') as writer:
-                if month in writer.sheets:
-                    startrow = writer.sheets[month].max_row
-                    sub_df.to_excel(writer, sheet_name=month, startrow=startrow, index=False, header=False)
-                else:
-                    sub_df.to_excel(writer, sheet_name=month, index=False)
-        except FileNotFoundError:
-            with pd.ExcelWriter(MASTER_PATH, engine='openpyxl') as writer:
-                sub_df.to_excel(writer, sheet_name=month, index=False)
-
-        workbook = load_workbook(MASTER_PATH)
-        worksheet = workbook[month]
-        worksheet.column_dimensions['A'].width = 11
-        workbook.save(MASTER_PATH)
+    ae_df = initialize_AE("sheets/Summary.xls")
+    td_credit_df = initialize_TD("sheets/accountactivity1.csv")
+    td_debit_df = initialize_TD("sheets/accountactivity.csv", is_debit=True)
+    split_df = combine_and_split_by_month(ae_df, td_credit_df, td_debit_df)
+    write_to_master(split_df)
 
 
     # book = load_workbook('sheets/master.xlsx')
@@ -46,3 +27,9 @@ if __name__ == "__main__":
     # Need to resize columns again
     # Need to restructure code again
 
+# Theory craft for removing duplicates
+# Pull existing info from sheets into a df
+# combine that df with the new one
+# df = df.drop_duplicates(subset=['Description', 'Amount'], keep='first')
+# Creates table that drops duplicate
+# Write that to the sheet
