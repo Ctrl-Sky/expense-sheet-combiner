@@ -21,12 +21,19 @@ def alter_and_sort_date(df, sheet_exist):
 def concat_with_existing_df(df, sheetname):
     existing_df = pd.read_excel(MASTER_PATH, sheet_name=sheetname)
     new_df = pd.concat([existing_df, df])
-    print(new_df)
-    print()
     new_df.drop_duplicates(['Description', 'Amount', 'id'], inplace=True, keep='last')
     return new_df
 
 def write_to_master(split_df):
+    """
+    Iterates through a dictionary created in combine_and_split.py. See that file for how the dictionary may look
+    
+    It writes each sub dataframe to an excel file at MASTER_PATH and creates or appends to a sheet based on the dictionary's key.
+
+    For each sheet:
+    - If the sheet exists, the data is merged with the existing data in the sheet, and then sorted based on date
+    - If the sheet does not exist, the data is sorted and written to a new sheet.
+    """
     for month, sub_df in split_df.items():
         try:
             with pd.ExcelWriter(MASTER_PATH, engine='openpyxl', mode='a', if_sheet_exists='overlay') as writer:
