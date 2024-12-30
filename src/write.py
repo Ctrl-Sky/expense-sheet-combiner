@@ -13,11 +13,15 @@ def concat_with_existing_df(df, sheetname):
     existing_df = pd.read_excel(MASTER_PATH, sheet_name=sheetname)
     new_df = pd.concat([existing_df, df])
     new_df.drop_duplicates(['Description', 'Amount'], inplace=True, keep='last')
-    return new_df
+    return alter_datetime_and_sort(new_df)
+
+def alter_datetime_and_sort(df):
+    df['Date'] = df['Date'].dt.date
+    df.sort_values(by='Date', inplace=True)
+    return df
 
 def write_to_master(split_df):
     for month, sub_df in split_df.items():
-        sub_df['Date'] = sub_df['Date'].dt.date
         try:
             with pd.ExcelWriter(MASTER_PATH, engine='openpyxl', mode='a', if_sheet_exists='overlay') as writer:
                 if month in writer.sheets:
@@ -30,3 +34,8 @@ def write_to_master(split_df):
                 sub_df.to_excel(writer, sheet_name=month, index=False)
 
         alter_column_width(month, 'A', 11) # Increase width of date column tp see full value
+
+# Catching Error
+# add nov-dec statement to master
+# try adding dec statement to master
+# all the purchases added to dec in nov-dec will then be moved to top and mess up the datetime

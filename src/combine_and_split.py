@@ -7,7 +7,6 @@ def split_df_by_month(df):
 
 def combine_df(ae, tdc, tdd):
     df_combined = pd.concat([ae, tdc, tdd])
-    df_combined.sort_values(by='Date', inplace=True)
     return df_combined
 
 def combine_and_split_by_month(df_AE, df_TD_credit, df_TD_debit):
