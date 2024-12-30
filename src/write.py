@@ -14,14 +14,16 @@ def alter_and_sort_date(df, sheet_exist):
     if sheet_exist:
         df['Day'] = df['Date'].dt.day
     else:
-        df.insert(1, 'Day', df['Date'].dt.day)
+        df.insert(2, 'Day', df['Date'].dt.day)
     df['Date'] = df['Date'].dt.date
     df.sort_values(by='Date', inplace=True)
 
 def concat_with_existing_df(df, sheetname):
     existing_df = pd.read_excel(MASTER_PATH, sheet_name=sheetname)
     new_df = pd.concat([existing_df, df])
-    new_df.drop_duplicates(['Description', 'Amount'], inplace=True, keep='last')
+    print(new_df)
+    print()
+    new_df.drop_duplicates(['Description', 'Amount', 'id'], inplace=True, keep='last')
     return new_df
 
 def write_to_master(split_df):
@@ -40,4 +42,4 @@ def write_to_master(split_df):
                 alter_and_sort_date(sub_df, sheet_exist=False)
                 sub_df.to_excel(writer, sheet_name=month, index=False)
 
-        alter_column_width(month, 'A', 11) # Increase width of date column tp see full value
+        alter_column_width(month, 'B', 11) # Increase width of date column tp see full value

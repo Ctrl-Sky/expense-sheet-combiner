@@ -13,8 +13,9 @@ def initialize_AE(credit_ae_sheet):
 
     Standardize American express bank xlsx file to look like data frame with this format:
 
-    Date     Description     Space1     Space2      Space3      Amount      Card
+    id      Date     Description     Space1     Space2      Space3      Amount      Card
 
+    id is the index. Together with Description and Amount, it is used to identify unique purchases
     Date is a datetime value
     Description includes info on where the purchase was made
     Space is empty value to make description easier to read
@@ -37,6 +38,7 @@ def initialize_AE(credit_ae_sheet):
     # Misc. Standardization
     df["Amount"] = pd.to_numeric(df['Amount'])
     df['Date'] = pd.to_datetime(df['Date'], format="%d %b %Y")
+    df.insert(0, "id", df.index)
 
     return df
 
@@ -48,8 +50,9 @@ def initialize_TD(td_sheet, is_debit=False):
 
     Standardize TD bank credit or debit file to look like data frame with this format:
 
-    Date     Description     Space1     Space2      Space3      Amount      Card
+    id      Date     Description     Space1     Space2      Space3      Amount      Card
 
+    id is the index. Together with Description and Amount, it is used to identify unique purchases
     Date is a datetime value
     Description includes info on where the purchase was made
     Space is empty value to make description easier to read
@@ -76,5 +79,6 @@ def initialize_TD(td_sheet, is_debit=False):
         df = df[filter]
     
     df['Date'] = pd.to_datetime(df['Date'], format=format)
+    df.insert(0, "id", df.index)
 
     return df

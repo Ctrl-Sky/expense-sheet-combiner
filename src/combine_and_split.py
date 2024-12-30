@@ -16,11 +16,11 @@ def combine_and_split_by_month(df_AE, df_TD_credit, df_TD_debit):
     Returns a dictionary where the key is the unique year-month and the value is the subdataframe
     Example:
     {
-    '2024-09':      Date  Description  Space1  Space2  Space3  Amount  Card
-                2024-09-12    Hi        NaN     NaN     NaN    15.05  Credit,
-    '2024-10':      Date  Description  Space1  Space2  Space3  Amount  Card
-                2024-10-16    Hello     NaN     NaN     NaN     3.05  Credit
-                2024-10-19    Hey       NaN     NaN     NaN    13.76  Credit
+    '2024-09':   id     Date     Description  Space1  Space2  Space3  Amount  Card
+                  1   2024-09-12    Hi        NaN     NaN     NaN    15.05  Credit,
+    '2024-10':   id     Date     Description  Space1  Space2  Space3  Amount  Card
+                 55   2024-10-16    Hello     NaN     NaN     NaN     3.05  Credit
+                 3    2024-10-19    Hey       NaN     NaN     NaN    13.76  Credit
     }
     """
     df = combine_df(df_AE, df_TD_credit, df_TD_debit)
