@@ -9,9 +9,13 @@ def alter_column_width(sheetname, column, width):
     worksheet.column_dimensions[column].width = width
     workbook.save(MASTER_PATH)
 
-def alter_and_sort_date(df):
+def alter_and_sort_date(df, sheet_exist):
     df['Date'] = pd.to_datetime(df['Date'])
-    df['Date'] = df['Date'].dt.day
+    if sheet_exist:
+        df['Day'] = df['Date'].dt.day
+    else:
+        df.insert(1, 'Day', df['Date'].dt.day)
+    df['Date'] = df['Date'].dt.date
     df.sort_values(by='Date', inplace=True)
 
 def concat_with_existing_df(df, sheetname):
@@ -26,14 +30,14 @@ def write_to_master(split_df):
             with pd.ExcelWriter(MASTER_PATH, engine='openpyxl', mode='a', if_sheet_exists='overlay') as writer:
                 if month in writer.sheets:
                     new_df = concat_with_existing_df(sub_df, sheetname=month)
-                    alter_and_sort_date(new_df)
+                    alter_and_sort_date(new_df, sheet_exist=True)
                     new_df.to_excel(writer, sheet_name=month, index=False)
                 else:
-                    alter_and_sort_date(sub_df)
+                    alter_and_sort_date(sub_df, sheet_exist=False)
                     sub_df.to_excel(writer, sheet_name=month, index=False)
         except FileNotFoundError:
             with pd.ExcelWriter(MASTER_PATH, engine='openpyxl') as writer:
-                alter_and_sort_date(sub_df)
+                alter_and_sort_date(sub_df, sheet_exist=False)
                 sub_df.to_excel(writer, sheet_name=month, index=False)
 
         alter_column_width(month, 'A', 11) # Increase width of date column tp see full value
