@@ -13,5 +13,5 @@ Install dependencies
 From python script
     - python ./src/main.py
 
-Use this to get the sum of purchases, excluding large purchases greater or less than 300
-=SUMIFS(INDIRECT("F2:F" & ROW()-1), INDIRECT("F2:F" & ROW()-1), "<=300", INDIRECT("F2:F" & ROW()-1), ">=-300")
+Use this to get the sum of purchases, excluding large purchases greater than 300 or large gains less than -300
+=SUMIFS(INDIRECT("H2:H" & ROW()-1), INDIRECT("H2:H" & ROW()-1), "<=300", INDIRECT("H2:H" & ROW()-1), ">=-300")
