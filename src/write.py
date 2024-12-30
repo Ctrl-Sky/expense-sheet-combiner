@@ -10,6 +10,7 @@ def alter_column_width(sheetname, column, width):
     workbook.save(MASTER_PATH)
 
 def alter_and_sort_date(df):
+    df['Date'] = pd.to_datetime(df['Date'])
     df['Date'] = df['Date'].dt.day
     df.sort_values(by='Date', inplace=True)
 
@@ -36,8 +37,3 @@ def write_to_master(split_df):
                 sub_df.to_excel(writer, sheet_name=month, index=False)
 
         alter_column_width(month, 'A', 11) # Increase width of date column tp see full value
-
-# Catching Error
-# add nov-dec statement to master
-# try adding dec statement to master
-# all the purchases added to dec in nov-dec will then be moved to top and mess up the datetime
