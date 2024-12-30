@@ -10,9 +10,8 @@ Create a virtual env\
     - . .venv/bin/activate\
 Install dependencies\
     - pip install -r requirements.txt\
-From python script\
+Run python script\
     - python ./src/main.py\
 
 Use this to get the sum of purchases, excluding large purchases greater than 300 or large gains less than -300\
-\
 =SUMIFS(INDIRECT("H2:H" & ROW()-1), INDIRECT("H2:H" & ROW()-1), "<=300", INDIRECT("H2:H" & ROW()-1), ">=-300")
