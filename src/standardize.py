@@ -20,12 +20,12 @@ def initialize_AE(credit_ae_sheet):
     Space is empty value to make description easier to read
     Amount is $ spent or earned (can be pos or neg)
     """
-    df = pd.read_excel(credit_ae_sheet, header=11)
+    df = pd.read_excel(credit_ae_sheet, header=12)
     
     # Remove unwanted charcters for standardization
     df['Description'] = df['Description'].str.lstrip('=')
-    df['Amount'] = df['Amount'].str.replace('$', '')
-    df['Amount'] = df['Amount'].str.replace(',', '')
+    df['Amount'] = df['Amount'].str.replace('$', '', regex=False)
+    df['Amount'] = df['Amount'].str.replace(',', '', regex=False)
 
     # Add or remove row and columns for standardization
     df.rename(columns={"Unnamed: 2": "Space1"}, inplace=True)
