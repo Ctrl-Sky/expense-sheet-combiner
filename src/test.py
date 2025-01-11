@@ -17,41 +17,6 @@ def get_latest_date(card):
         return None
     return None
 
-def initialize_AE(credit_ae_sheet):
-    """
-    American bank xlsx file originally looks like and starts at line 12:
-
-    Date    Description     Space     Amount
-
-    Standardize American express bank xlsx file to look like data frame with this format:
-
-    Date     Description     Space1     Space2      Space3      Amount      Card
-
-    Date is a datetime value
-    Description includes info on where the purchase was made
-    Space is empty value to make description easier to read
-    Amount is $ spent or earned (can be pos or neg)
-    """
-    df = pd.read_excel(credit_ae_sheet, header=12)
-    
-    # Remove unwanted charcters for standardization
-    df['Description'] = df['Description'].str.lstrip('=')
-    df['Amount'] = df['Amount'].str.replace('$', '', regex=False)
-    df['Amount'] = df['Amount'].str.replace(',', '', regex=False)
-
-    # Add or remove row and columns for standardization
-    df.rename(columns={"Unnamed: 2": "Space1"}, inplace=True)
-    df.insert(3, "Space2", [np.nan]*len(df))
-    df.insert(4, "Space3", [np.nan]*len(df))
-    df = remove_credit_card_thank_you(df) # Remove credit card payback row
-    df.insert(6, "Card", ["Amex"]*len(df)) # Column for identifying which card the purchases was made with
-
-    # Misc. Standardization
-    df["Amount"] = pd.to_numeric(df['Amount'])
-    df['Date'] = pd.to_datetime(df['Date'], format="%d %b %Y")
-
-    return df
-
 def initialize_TD(td_sheet, is_debit=False):
     """
     Original TD Bank csv file looks like:
@@ -81,12 +46,19 @@ def initialize_TD(td_sheet, is_debit=False):
     # Move values in Gained column into Amount column as negative values
     df['Amount'] = df['Amount'].fillna(-df['Gained'])
     df = df.drop(df.columns[-1], axis=1)
+
+    df['Date'] = pd.to_datetime(df['Date'], format=format)
     
     # Only included e-transfer information for debit card
     if is_debit:
         filter = df["Description"].str.contains("SEND E-TFR|E-TRANSFER")
         df = df[filter]
+        latest_date = get_latest_date('Debit')
+        # print(latest_date)
+        # print(df['Date'] > latest_date)
+        df = df[df['Date'] > latest_date]
     
-    df['Date'] = pd.to_datetime(df['Date'], format=format)
-
+    print(df)
     return df
+
+td_debit_df = initialize_TD("sheets/accountactivity.csv", is_debit=True)
