@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 import numpy as np
 
@@ -5,7 +6,18 @@ def remove_credit_card_thank_you(df):
     filter = df["Description"].str.contains("THANK YOU")
     return df[~filter]
 
-def initialize_AE(credit_ae_sheet):
+def get_latest_date(card):
+    if os.path.isfile('sheets/master.xlsx'):
+        excel_file = pd.ExcelFile('sheets/master.xlsx')
+        for sheet_name in reversed(excel_file.sheet_names):
+            df = excel_file.parse(sheet_name)
+            for index, row in reversed(list(df.iterrows())):
+                if row['Card'] == card:
+                    return row['Date']
+        return "2004-03-23"
+    return "2004-03-23" # Arbritary date that no purchases should be older than
+
+def initialize_AE(credit_ae_sheet, update):
     """
     American bank xlsx file originally looks like and starts at line 12:
 
@@ -40,9 +52,13 @@ def initialize_AE(credit_ae_sheet):
     df['Date'] = pd.to_datetime(df['Date'], format="%d %b %Y")
     df.insert(0, "id", df.index)
 
+    if update:
+        latest_date = get_latest_date('Amex')
+        df = df[df['Date'] > latest_date]
+
     return df
 
-def initialize_TD(td_sheet, is_debit=False):
+def initialize_TD(td_sheet, update, is_debit=False):
     """
     Original TD Bank csv file looks like:
 
@@ -73,12 +89,20 @@ def initialize_TD(td_sheet, is_debit=False):
     df['Amount'] = df['Amount'].fillna(-df['Gained'])
     df = df.drop(df.columns[-1], axis=1)
     
+    df['Date'] = pd.to_datetime(df['Date'], format=format)
+    df.insert(0, "id", df.index)
+
     # Only included e-transfer information for debit card
     if is_debit:
         filter = df["Description"].str.contains("SEND E-TFR|E-TRANSFER")
         df = df[filter]
-    
-    df['Date'] = pd.to_datetime(df['Date'], format=format)
-    df.insert(0, "id", df.index)
+
+        # Cut off Debit card no matter what because csv file always includes every purchase
+        latest_date = get_latest_date(card_name)
+        df = df[df['Date'] > latest_date]
+
+    if not is_debit and update:
+        latest_date = get_latest_date(card_name)
+        df = df[df['Date'] > latest_date]
 
     return df
