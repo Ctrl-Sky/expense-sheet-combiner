@@ -38,7 +38,7 @@ def initialize_AE(credit_ae_sheet, update):
     # Remove unwanted charcters for standardization
     df['Description'] = df['Description'].str.lstrip('=')
     df['Amount'] = df['Amount'].str.replace('$', '')
-    df['Amount'] = df['Amount'].str.replace(',', '')
+    df['Amount'] = df['Amount'].str.replace(',', '', regex=False)
 
     # Add or remove row and columns for standardization
     df.rename(columns={"Unnamed: 2": "Space1"}, inplace=True)

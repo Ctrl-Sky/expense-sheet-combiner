@@ -6,3 +6,5 @@ venv/
 sheets
 
 __pycache__
+
+.DS_store
