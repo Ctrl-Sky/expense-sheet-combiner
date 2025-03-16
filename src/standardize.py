@@ -33,7 +33,7 @@ def initialize_AE(credit_ae_sheet, update):
     Space is empty value to make description easier to read
     Amount is $ spent or earned (can be pos or neg)
     """
-    df = pd.read_excel(credit_ae_sheet, header=12)
+    df = pd.read_excel(credit_ae_sheet, header=11)
     
     # Remove unwanted charcters for standardization
     df['Description'] = df['Description'].str.lstrip('=')
@@ -75,7 +75,8 @@ def initialize_TD(td_sheet, update, is_debit=False):
     Amount is $ spent or earned (can be pos or neg)
     """
     card_name = "Debit" if is_debit else "Credit"
-    format = "%Y-%m-%d" if is_debit else "%m/%d/%Y"
+    # format = "%Y-%m-%d" if is_debit else "%m/%d/%Y" format has been changed
+    format = "%m/%d/%Y"
 
     df = pd.read_csv(td_sheet, usecols=[0,1,2,3], names=["Date", "Description", "Amount", "Gained"])
 
