@@ -49,6 +49,7 @@ def initialize_AE(credit_ae_sheet, update):
 
     # Misc. Standardization
     df["Amount"] = pd.to_numeric(df['Amount'])
+    df['Date'] = df['Date'].str.replace('.', '')
     df['Date'] = pd.to_datetime(df['Date'], format="%d %b %Y")
     df.insert(0, "id", df.index)
 
@@ -75,8 +76,8 @@ def initialize_TD(td_sheet, update, is_debit=False):
     Amount is $ spent or earned (can be pos or neg)
     """
     card_name = "Debit" if is_debit else "Credit"
-    # format = "%Y-%m-%d" if is_debit else "%m/%d/%Y" format has been changed
-    format = "%m/%d/%Y"
+    format = "%Y-%m-%d" if is_debit else "%m/%d/%Y"
+    # format = "%m/%d/%Y"
 
     df = pd.read_csv(td_sheet, usecols=[0,1,2,3], names=["Date", "Description", "Amount", "Gained"])
 
