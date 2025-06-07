@@ -1,30 +1,22 @@
-# Powershell equivalent of execute_application.sh
-
-# Keep up to date
+# Ensure repo is up-to-date
 git pull
 
-# Install Dependencies
-python -m venv .venv
+# Setup Virtual Environment
+python3.12 -m venv .venv
 .\.venv\Scripts\activate
-
-# Install required packages
 pip install -r requirements.txt
 
-# Get variables from job_description.txt
-$COMPANY_NAME = python utils/get_company_name.py
-$JOB_TITLE = python utils/get_job_title.py
+# Run validation
+Write-Host "Validating..."
+python ./verify_sheets.py
+Write-Host "Completed"
 
-# Generate Resume and Cover Letter
-python src/main.py
-
-# Store and save resume and cover letter
-.\cleanup_scripts\store_resume_and_cl.ps1 $COMPANY_NAME $JOB_TITLE
-python cleanup_scripts\save_to_csv.py $COMPANY_NAME $JOB_TITLE
-
+# Run python script
+python ./src/main.py true
 Write-Host "Application successfully executed"
 
-# Break down
+# Exit venv
 deactivate
 git add .
-git commit -m "(Automated Commit) Job application updated"
+git commit -m "(Automated Commit) Expense sheet updated"
 git push
